@@ -3,12 +3,12 @@ import csv
 from collections import defaultdict
 from datetime import datetime
 
-from .constants import BASE_DIR, DATE
+from .constants import BASE_DIR, DATE, RESULTS_DIR
 
 
 class PepParsePipeline:
     def __init__(self) -> None:
-        self.results = BASE_DIR / 'results'
+        self.results = BASE_DIR / RESULTS_DIR
         self.results.mkdir(parents=True, exist_ok=True)
 
     def open_spider(self, spider):
@@ -25,6 +25,7 @@ class PepParsePipeline:
                   mode='w', encoding='utf-8', newline='') as f:
             writer = csv.writer(f)
             writer.writerow(['Status', 'Count'])
-            for status, count in self.status_count.items():
-                writer.writerow([status, count])
+            status_rows = [[status, count]
+                           for status, count in self.status_count.items()]
+            writer.writerows(status_rows)
             writer.writerow(['Total', total])
